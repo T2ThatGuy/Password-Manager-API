@@ -13,6 +13,7 @@ This can be done through the following terminal / cmd commands
 
 To check that the database file has been correctly created navigate to the app folder and you should see the `database.db` this is your database file.
 
+If this does not work or returns an error at any stage make sure you have the SQLAlchemy extension library for Flask installed!
 
 ## Normal Usage
 
