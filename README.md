@@ -1,5 +1,19 @@
 # Password Manager API
 
+## Creating / Linking a Database
+
+After downloading the repository the database will not exist yet. You will have to create the database using the models provided in the database.py file.
+
+This can be done through the following terminal / cmd commands
+
+- `Navigate to the root dir of the project`
+- `python` to open the python shell in the console
+- `from app.database import db` to import the database functionality
+- `db.create_all()` to create the database and its file
+
+To check that the database file has been correctly created navigate to the app folder and you should see the `database.db` this is your database file.
+
+
 ## Normal Usage
 
 All responses will be in the form
