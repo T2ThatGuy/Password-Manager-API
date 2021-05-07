@@ -11,12 +11,12 @@ All responses will be in the form
 }
 ```
 
-Subsequent response definitions will only detail the expected value fo the 'data field'
+Subsequent response definitions will only detail the expected value fo the `data field`
 
 ### List all users
 
 ## Requires
 
-'ADMIN = True'
+`ADMIN = True`
 
-'GET /users'
+`GET /users`
