@@ -31,11 +31,14 @@ Subsequent response definitions will only detail the expected value fo the `data
 
 ```json
 {
-    "id": "12",
-    "username": "User",
-    "email": "User@gmail.com",
-    "public_id": "fed92080-51da-426f-a04b-603e773a6462",
-    "permission_level": "normal"
+    "data": {
+        "id": "12",
+        "username": "User",
+        "email": "User@gmail.com",
+        "public_id": "fed92080-51da-426f-a04b-603e773a6462",
+        "permission_level": "normal"
+    },
+    "token": "Generated Session Token"
 }
 ```
 
@@ -59,11 +62,14 @@ Subsequent response definitions will only detail the expected value fo the `data
 If Successful
 
 {
-    "id": "12",
-    "username": "User1",
-    "email": "User@gmail.com",
-    "public_id": "fed92080-51da-426f-a04b-603e773a6462",
-    "permission_level": "normal"
+    "data": {
+        "id": "12",
+        "username": "User",
+        "email": "User@gmail.com",
+        "public_id": "fed92080-51da-426f-a04b-603e773a6462",
+        "permission_level": "normal"
+    },
+    "token": "Generated Session Token"
 }
 ```
 
