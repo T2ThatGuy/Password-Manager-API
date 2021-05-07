@@ -1,6 +1,6 @@
 # Password Manager API
 
-## Usage
+## Normal Usage
 
 All responses will be in the form
 
@@ -82,6 +82,8 @@ If Successful
 
 - `200 OK` on success
 - `404 Not Found or 401 Unauthorized` on failed password update
+
+## Admin Usage
 
 ### List all users
 
