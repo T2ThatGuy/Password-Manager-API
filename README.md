@@ -17,18 +17,21 @@ If this does not work or returns an error at any stage make sure you have the SQ
 
 ## Normal Usage
 
-All responses will be in the form
-
+All responses will resemble this form
 ```json
 {
     "data": "Holds the content of the response",
-    "message": "Description of the response"
+    "message": "Desciption of the response"
 }
 ```
 
-Subsequent response definitions will only detail the expected value fo the `data field`
+Responses below will only detail the contents of the `data` field
 
-### Register a New User
+All requests will require a piece of JSON attached to be used in the request unless stated otherwise in the specific request... The content of the JSON required can be found in each requests arguments section below.
+
+## User Routes
+
+### Resiter a new user
 
 **Requires**
 
@@ -43,21 +46,22 @@ Subsequent response definitions will only detail the expected value fo the `data
 **Response**
 
 - `201 Created` on success
+- `400 Failed` on failure
 
 ```json
 {
     "data": {
-        "id": "12",
-        "username": "User",
-        "email": "User@gmail.com",
-        "public_id": "fed92080-51da-426f-a04b-603e773a6462",
-        "permission_level": "normal"
-    },
-    "token": "Generated Session Token"
+        "id": "ID of the new user (int)",
+        "username": "Username of the new user (string)",
+        "email": "Email of the new user (string)",
+        "public_id": "Public ID of the new user (string)",
+        "admin": "Admin status of the new user (boolean)",
+        "token": "Valid token of the new user (string) lasting a set time before timing out"
+    }
 }
 ```
 
-### Login a User
+### Login a user
 
 **Requires**
 
@@ -65,7 +69,7 @@ Subsequent response definitions will only detail the expected value fo the `data
 
 **Arguments / Authentication**
 
-- `"Username / Email":string`
+- `"Username":string`
 - `"Password":string`
 
 **Response**
@@ -74,63 +78,48 @@ Subsequent response definitions will only detail the expected value fo the `data
 - `401 Unauthorized` on failed login attempt
 
 ```json
-If Successful
-
 {
     "data": {
-        "id": "12",
-        "username": "User",
-        "email": "User@gmail.com",
-        "public_id": "fed92080-51da-426f-a04b-603e773a6462",
-        "permission_level": "normal"
-    },
-    "token": "Generated Session Token"
+        "id": "ID of the new user (int)",
+        "username": "Username of the new user (string)",
+        "email": "Email of the new user (string)",
+        "public_id": "Public ID of the new user (string)",
+        "admin": "Admin status of the new user (boolean)",
+        "token": "Valid token of the new user (string) lasting a set time before timing out"
+    }
 }
 ```
 
-### Update user password
+### Change user password
 
 **Requires**
 
 `USAGE : PUT /user/update-password`
 
-**Arguments**
+**Required Header Value**
 
-- `"id":string` Non public version of the users ID
-- `"password":string` New password for the user
-
-**Response**
-
-- `200 OK` on success
-- `404 Not Found or 401 Unauthorized` on failed password update
-
-## Admin Usage
-
-### List all users
-
-**Requires**
-
-`PERMISSION LEVEL : ADMIN`
-
-`USAGE : GET /user`
+- `"x-access-token":string` Previously given token upon user login or sign up
 
 **Response**
 
 - `200 OK` on success
+- `401 Unauthorized` on invalid token
 
 ```json
-[
-    {
-        "username": "User1",
-        "email": "User1@gmail.com",
-        "public_id": "fed92080-51da-426f-a04b-603e773a6462",
-        "permission_level": "normal"
-    },
-    {
-        "username": "User2",
-        "email": "User2@gmail.com",
-        "public_id": "3017fa41-574d-4be6-98ba-951a5dfa2a16",
-        "permission_level": "admin"
-    }
-]
+{
+    "data": [],
+    "message": "Password Updated Successfully!"
+}
 ```
+
+## Dashboard Routes
+
+### Create password form
+
+### Delete password form
+
+### Change password form
+
+### Get all passwords for a specific user
+
+### Get a specific password
