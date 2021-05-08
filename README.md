@@ -37,10 +37,9 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 `USAGE : POST /user/signup`
 
-**Arguments**
+**Arguments JSON**
 
 - `"username":string`
-- `"email":string`
 - `"password":string`
 
 **Response**
@@ -67,7 +66,7 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 `USAGE : GET /user/login`
 
-**Arguments / Authentication**
+**Arguments AUTHENTICATION**
 
 - `"Username":string`
 - `"Password":string`
@@ -96,9 +95,13 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 `USAGE : PUT /user/update-password`
 
-**Required Header Value**
+**Required Headers**
 
 - `"x-access-token":string` Previously given token upon user login or sign up
+
+**Arguments JSON**
+
+- `"password":string` New password of the user
 
 **Response**
 
@@ -116,10 +119,182 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 ### Create password form
 
+**Requires**
+
+`USAGE : POST /dashboard/create-password`
+
+**Required Headers**
+
+- `"x-access-token":string` Previously given token upon user login or sign up
+
+**Arguments JSON**
+
+- `"password_name":string` Name of the password form
+- `"username":string` 
+- `"email":string` 
+- `"password":string` 
+- `"application":string` 
+- `"url":string` 
+
+- `"user_id":string`
+
+**Response**
+
+- `201 Created` on success
+- `400 Failed` on failure
+
+```json
+{
+    "data": {
+        "id": "ID of the password created",
+        "password_name": "Name associated with the password form",
+        "username": "Username used in the password form",
+        "email": "Email used in the password form",
+        "password": "Password used in the password form",
+        "application": "Application used in the password form",
+        "url": "Url used in the password form",
+        "user_id": "User_id that links the user to this password"
+    }
+}
+```
+
 ### Delete password form
+
+**Requires**
+
+`USAGE : DELETE /dashboard/del-password/<password_id>`
+
+**Required Headers**
+
+- `"x-access-token":string` Previously given token upon user login or sign up
+
+**Arguments**
+
+- `"password_id":int` ID of the password to be deleted
+
+**Response**
+
+- `200 OK` on success
+- `401 Unauthorized` on invalid token
+
+```json
+{
+    "data": [],
+    "message": "Password Deleted Successfully"
+}
+```
 
 ### Change password form
 
+**Requires**
+
+`USAGE : PUT /dashboard/change-password/<password_id>`
+
+**Required Headers**
+
+- `"x-access-token":string` Previously given token upon user login or sign up
+
+**Arguments**
+
+- `"password_id":int` ID of the password to be modified
+
+**Arguments JSON**
+
+- `"password":string` Newly generated password
+
+**Response**
+
+- `200 OK` on success
+- `401 Unauthorized` on invalid token
+
+```json
+{
+    "data": {
+        "id": "ID of the password form",
+        "password_name": "Name associated with the password form",
+        "username": "Username used in the password form",
+        "email": "Email used in the password form",
+        "password": "Password used in the password form",
+        "application": "Application used in the password form",
+        "url": "Url used in the password form",
+        "user_id": "User_id that links the user to this password"
+    }
+}
+```
+
 ### Get all passwords for a specific user
 
+**Requires**
+
+`USAGE : /dashboard/get-passwords`
+
+**Required Headers**
+
+- `"x-access-token":string` Previously given token upon user login or sign up
+
+**Response**
+
+- `200 OK` on success
+- `401 Unauthorized` on invalid token
+
+```json
+{
+    "data": [
+        {
+            "id": "ID of the password form",
+            "password_name": "Name associated with the password form",
+            "username": "Username used in the password form",
+            "email": "Email used in the password form",
+            "password": "Password used in the password form",
+            "application": "Application used in the password form",
+            "url": "Url used in the password form",
+            "user_id": "User_id that links the user to this password"
+        },
+        {
+            "id": "ID of the password form",
+            "password_name": "Name associated with the password form",
+            "username": "Username used in the password form",
+            "email": "Email used in the password form",
+            "password": "Password used in the password form",
+            "application": "Application used in the password form",
+            "url": "Url used in the password form",
+            "user_id": "User_id that links the user to this password"
+        }
+    ]
+}
+```
+
 ### Get a specific password
+
+**Requires**
+
+`USAGE : /dashboard/get-password/<password_id>`
+
+**Required Headers**
+
+- `"x-access-token":string` Previously given token upon user login or sign up
+
+**Arguments**
+
+- `"password_id":int` ID of the password to be found
+
+**Response**
+
+- `200 OK` on success
+- `401 Unauthorized` on invalid token
+- `404 Not Found` on unable to find specific password
+
+```json
+{
+    "data": {
+        "id": "ID of the password form",
+        "password_name": "Name associated with the password form",
+        "username": "Username used in the password form",
+        "email": "Email used in the password form",
+        "password": "Password used in the password form",
+        "application": "Application used in the password form",
+        "url": "Url used in the password form",
+        "user_id": "User_id that links the user to this password"
+    }
+}
+```
