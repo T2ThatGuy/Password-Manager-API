@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from app import app
 
+# --- Database Initialization
 db = SQLAlchemy(app)
 
+# --- User Table & Attributes
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -12,6 +14,7 @@ class User(db.Model):
 
     admin = db.Column(db.Boolean)
 
+# --- Password Table & Attributes
 class Password(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 

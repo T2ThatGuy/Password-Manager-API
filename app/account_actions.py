@@ -1,11 +1,17 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+# --- Flask Imports
 from flask import request, jsonify
+
+# --- Security Imports
+from werkzeug.security import check_password_hash
 import uuid, datetime, jwt
-from app import app
+
+# --- App Imports
 from app.database import User, db
+from app import app
 
 class AccountActions:
 
+    # --- Verifies and logs in the user if the details are correct
     def login(self):
         auth = request.authorization
 
@@ -31,11 +37,11 @@ class AccountActions:
 
         return jsonify({"data": auth, "message": "Could not verify password"}), 401
 
+    # --- Adds the new user to the database and logs them in
     def signup(self):
         data = request.get_json()
 
-        hashed_password = generate_password_hash(data["password"], method='sha256')
-        new_user = User(public_id = str(uuid.uuid4()), username=data["username"], password=hashed_password, admin = False)
+        new_user = User(public_id = str(uuid.uuid4()), username=data["username"], password=data['password'], admin = False)
         db.session.add(new_user)
         db.session.commit()
 

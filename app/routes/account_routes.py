@@ -3,6 +3,14 @@ from app import app
 
 from app.account_actions import AccountActions
 
+#--- Main Page
+
+@app.route('/user')
+def user():
+    return jsonify({"data": [], "message": "Got to user log in page!"}), 200
+
+# --- Sub Links
+
 @app.route('/user/login')
 def login():
     return AccountActions().login()
@@ -12,5 +20,5 @@ def signup():
     return AccountActions().signup()
 
 @app.route('/user/update-password')
-def change_password():
+def update_password():
     return AccountActions().change_password()
