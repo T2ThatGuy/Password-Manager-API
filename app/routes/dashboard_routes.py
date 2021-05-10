@@ -2,6 +2,7 @@ from flask import jsonify
 from app import app
 
 from app.dashboard_actions import DashboardActions
+from app.conditions import token_required
 
 # --- Main Page
 
@@ -11,22 +12,27 @@ def dashboard():
 
 # --- Sub Links
 
-@app.route('/dashboard/create-password')
-def create_password():
-    return DashboardActions().create_password()
+@app.route('/dashboard/create-password', methods=['POST'])
+@token_required
+def create_password(current_user):
+    return DashboardActions().create_password(current_user)
 
 @app.route('/dashboard/del-password/<password_id>')
-def delete_password(password_id):
-    return DashboardActions().delete_password(password_id)
+@token_required
+def delete_password(user_id, password_id):
+    return DashboardActions().delete_password(user_id, password_id)
 
 @app.route('/dashboard/change-password/<password_id>')
-def change_password(password_id):
-    return DashboardActions().change_password(password_id)
+@token_required
+def change_password(user_id, password_id):
+    return DashboardActions().change_password(user_id, password_id)
 
-@app.route('/dashboard/get-passwords/<user_id>')
-def get_passwords(user_id):
-    return DashboardActions().get_passwords(user_id)
+@app.route('/dashboard/get-passwords/')
+@token_required
+def get_passwords(current_user):
+    return DashboardActions().get_passwords(current_user)
 
 @app.route('/dashboard/get-password/<password_id>')
-def get_password(password_id):
-    return DashboardActions().get_password(password_id)
+@token_required
+def get_password(user_id, password_id):
+    return DashboardActions().get_password(user_id, password_id)

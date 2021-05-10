@@ -31,9 +31,10 @@ class AccountActions:
                 "username": user.username,
                 "public_id": user.public_id,
                 "admin": user.admin,
+                "token": token
             }
 
-            return jsonify({"data": data, "message": "User signed in successfully", "token": token}), 200
+            return jsonify({"data": data, "message": "User signed in successfully"}), 200
 
         return jsonify({"data": auth, "message": "Could not verify password"}), 401
 
@@ -45,16 +46,17 @@ class AccountActions:
         db.session.add(new_user)
         db.session.commit()
 
-        token = jwt.encode({'public_id' : new_user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id' : new_user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
 
         data = {
             "id": new_user.id,
             "username": new_user.username,
             "public_id": new_user.public_id,
             "admin": new_user.admin,
+            "token": token
         }
 
-        return jsonify({"data": data, "message": "New user created successfully!", "token": token}), 200
+        return jsonify({"data": data, "message": "New user created successfully!"}), 200
 
     def change_password():
         pass

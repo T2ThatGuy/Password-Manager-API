@@ -31,7 +31,7 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 ## User Routes
 
-### Resiter a new user
+### Register a new user
 
 **Requires**
 
@@ -52,7 +52,6 @@ All requests will require a piece of JSON attached to be used in the request unl
     "data": {
         "id": "ID of the new user (int)",
         "username": "Username of the new user (string)",
-        "email": "Email of the new user (string)",
         "public_id": "Public ID of the new user (string)",
         "admin": "Admin status of the new user (boolean)",
         "token": "Valid token of the new user (string) lasting a set time before timing out"
@@ -81,7 +80,6 @@ All requests will require a piece of JSON attached to be used in the request unl
     "data": {
         "id": "ID of the new user (int)",
         "username": "Username of the new user (string)",
-        "email": "Email of the new user (string)",
         "public_id": "Public ID of the new user (string)",
         "admin": "Admin status of the new user (boolean)",
         "token": "Valid token of the new user (string) lasting a set time before timing out"
@@ -135,8 +133,6 @@ All requests will require a piece of JSON attached to be used in the request unl
 - `"password":string` 
 - `"application":string` 
 - `"url":string` 
-
-- `"user_id":string`
 
 **Response**
 
