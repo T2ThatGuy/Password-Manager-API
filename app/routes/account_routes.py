@@ -3,6 +3,8 @@ from app import app
 
 from app.account_actions import AccountActions
 
+from flask_jwt_extended import jwt_required
+
 #--- Main Page
 
 @app.route('/user')
@@ -19,6 +21,7 @@ def login():
 def signup():
     return AccountActions().signup()
 
-@app.route('/user/update-password')
+@app.route('/user/update-password', methods=['PUT'])
+@jwt_required()
 def update_password():
     return AccountActions().change_password()

@@ -1,5 +1,6 @@
 # --- Flask Imports
 from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity
 
 # --- App Imports
 from app.database import db, Password, User
@@ -7,8 +8,9 @@ from app import app
 
 class DashboardActions:
     
-    def create_password(self, current_user):
+    def create_password(self):
         data = request.get_json()
+        user_id = get_jwt_identity()
 
         new_password = Password(
             password_name = data['password_name'], 
@@ -17,7 +19,7 @@ class DashboardActions:
             password = data['password'],
             application = data['application'],
             url = data['url'],
-            user_id = current_user.id
+            user_id = user_id
             )
 
         db.session.add(new_password)
@@ -30,20 +32,22 @@ class DashboardActions:
             "password": data['password'],
             "application": data['application'],
             "url": data['url'],
-            "user_id": current_user.id
+            "user_id": user_id
         }
 
         return jsonify({'data': responseData, 'message': 'The new password has been created successfully'})
 
-    def change_password(user_id, password_id):
+    def change_password(password_id):
         pass
 
-    def delete_password(user_id, password_id):
+    def delete_password(password_id):
         pass
 
-    def get_passwords(self, current_user):
+    def get_passwords(self):
         pswArray = []
-        response = Password.query.filter_by(user_id = current_user.id)
+
+        user_id = get_jwt_identity()
+        response = Password.query.filter_by(user_id=user_id)
 
         for psw in response:
             tempDict = {}
@@ -59,5 +63,5 @@ class DashboardActions:
 
         return jsonify({'data': pswArray, 'message': 'Information retrieved succesfully'})
     
-    def get_password(user_id, password_id):
+    def get_password(password_id):
         pass

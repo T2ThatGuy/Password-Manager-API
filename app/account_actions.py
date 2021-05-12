@@ -1,9 +1,11 @@
 # --- Flask Imports
 from flask import request, jsonify
+from flask_jwt_extended.utils import get_jwt_identity
 
 # --- Security Imports
-from werkzeug.security import check_password_hash
-import uuid, datetime, jwt
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import create_access_token
+import uuid, datetime
 
 # --- App Imports
 from app.database import User, db
@@ -24,14 +26,16 @@ class AccountActions:
             return jsonify({"data": auth, "message": "Username not found"}), 404
 
         if check_password_hash(user.password, auth.password):
-            token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, app.config['SECRET_KEY'])
+            expires = datetime.timedelta(days=7)
+            token = create_access_token(identity=str(user.id), expires_delta=expires)
 
             data = {
                 "id": user.id,
                 "username": user.username,
                 "public_id": user.public_id,
                 "admin": user.admin,
-                "token": token
+                "token": token,
+                "user_password": user.password
             }
 
             return jsonify({"data": data, "message": "User signed in successfully"}), 200
@@ -42,11 +46,14 @@ class AccountActions:
     def signup(self):
         data = request.get_json()
 
-        new_user = User(public_id = str(uuid.uuid4()), username=data["username"], password=data['password'], admin = False)
+        hashedPass = generate_password_hash(data['password'])
+
+        new_user = User(public_id = str(uuid.uuid4()), username=data["username"], password = hashedPass, admin = False)
         db.session.add(new_user)
         db.session.commit()
 
-        token = jwt.encode({'public_id' : new_user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        expires = datetime.timedelta(days=7)
+        token = create_access_token(identity=str(new_user.id), expires_delta=expires)
 
         data = {
             "id": new_user.id,
@@ -58,5 +65,19 @@ class AccountActions:
 
         return jsonify({"data": data, "message": "New user created successfully!"}), 200
 
-    def change_password():
-        pass
+    def change_password(self):
+        data = request.get_json()
+        current_id = get_jwt_identity()
+
+        user = User.query.filter_by(id = current_id).first()
+
+        hashedPass = generate_password_hash(data['password'])
+
+        user.password = hashedPass
+
+        db.session.commit()
+
+        return jsonify({'data': [], 'message': 'Account password updated successfully!'})
+
+
+
