@@ -91,8 +91,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : PUT /user/update-password`
-`VALID TOKEN`
+- `USAGE : PUT /user/update-password`
+- `VALID TOKEN`
 
 **Arguments JSON**
 
@@ -116,8 +116,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : POST /dashboard/create-password`
-`VALID TOKEN`
+- `USAGE : POST /dashboard/create-password`
+- `VALID TOKEN`
 
 **Arguments JSON**
 
@@ -152,8 +152,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : DELETE /dashboard/del-password/<password_id>`
-`VALID TOKEN`
+- `USAGE : DELETE /dashboard/del-password/<password_id>`
+- `VALID TOKEN`
 
 **Arguments**
 
@@ -175,8 +175,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : PUT /dashboard/change-password/<password_id>`
-`VALID TOKEN`
+- `USAGE : PUT /dashboard/change-password/<password_id>`
+- `VALID TOKEN`
 
 **Arguments**
 
@@ -210,8 +210,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : /dashboard/get-passwords`
-`VALID TOKEN`
+- `USAGE : /dashboard/get-passwords`
+- `VALID TOKEN`
 
 **Response**
 
@@ -249,8 +249,8 @@ All requests will require a piece of JSON attached to be used in the request unl
 
 **Requires**
 
-`USAGE : /dashboard/get-password/<password_id>`
-`VALID TOKEN`
+- `USAGE : /dashboard/get-password/<password_id>`
+- `VALID TOKEN`
 
 **Arguments**
 
