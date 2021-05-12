@@ -38,10 +38,50 @@ class DashboardActions:
         return jsonify({'data': responseData, 'message': 'The new password has been created successfully'}), 200
 
     def change_password(self):
-        pass
+        user_id = get_jwt_identity()
+        data = request.get_json()
+
+        if not data or not data['password'] and data['password_id']:
+            return jsonify({'data': [], 'message': 'The password is invalid'}), 404
+
+        response = Password.query.filter_by(user_id = user_id, id = data['password_id']).first()
+
+        if not response:
+            return jsonify({'data': data, 'message': 'The password could not be found!'}), 404
+
+        response.password = data['password']
+        db.session.commit()
+
+        returnData = {
+            'id': response.id,
+            'password_name': response.password_name,
+            'username': response.username,
+            'email': response.email,
+            'password': response.password,
+            'application': response.application,
+            'url': response.url
+        }
+
+        return jsonify({'data': returnData, 'message': 'The password has been changed successfully!'}), 200
+
 
     def delete_password(self):
-        pass
+        data = request.get_json()
+        user_id = get_jwt_identity()
+
+        if not data or not data['password_id']:
+            return jsonify({'data': [], 'message': 'Data inputed is invalid!'}), 400
+
+        response = Password.query.filter_by(user_id=user_id, id=data['password_id']).first()
+
+        if not response:
+            return jsonify({'data': [], 'message': 'Password could not be found!'}), 404
+
+        db.session.delete(response)
+        db.session.commit()
+
+        return jsonify({'data': data['password_id'], 'message': 'Password deleted successfully!'}), 200
+
 
     def get_passwords(self):
         pswArray = []
