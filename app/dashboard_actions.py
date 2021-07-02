@@ -6,11 +6,16 @@ from flask_jwt_extended import get_jwt_identity
 from app.database import db, Password, User
 from app import app
 
+import uuid
+
 class DashboardActions:
-    
+
     def create_password(self):
         data = request.get_json()
         user_id = get_jwt_identity()
+
+        if not 'uid' in data:
+            uid = uuid.uuid4()
 
         new_password = Password(
             password_name = data['password_name'], 
@@ -19,23 +24,24 @@ class DashboardActions:
             password = data['password'],
             application = data['application'],
             url = data['url'],
-            user_id = user_id
-            )
+            user_id = user_id,
+            uid = data['uid'] if 'uid' in data else str(uid)
+        )
 
         db.session.add(new_password)
         db.session.commit()
 
         responseData = {
+            "uid": uid,
             "password_name": data['password_name'], 
             "username": data['username'],
             "email": data['email'],
             "password": data['password'],
             "application": data['application'],
-            "url": data['url'],
-            "user_id": user_id
+            "url": data['url']
         }
 
-        return jsonify({'data': responseData, 'message': 'The new password has been created successfully'}), 200
+        return jsonify({'data': responseData, 'message': 'The new password has been created successfully'}), 202
 
     def change_password(self):
         user_id = get_jwt_identity()
@@ -44,7 +50,7 @@ class DashboardActions:
         if not data or not data['password'] and data['password_id']:
             return jsonify({'data': [], 'message': 'The password is invalid'}), 404
 
-        response = Password.query.filter_by(user_id = user_id, id = data['password_id']).first()
+        response = Password.query.filter_by(user_id = user_id, uid = data['password_id']).first()
 
         if not response:
             return jsonify({'data': data, 'message': 'The password could not be found!'}), 404
@@ -53,7 +59,7 @@ class DashboardActions:
         db.session.commit()
 
         returnData = {
-            'id': response.id,
+            'uid': response.uid,
             'password_name': response.password_name,
             'username': response.username,
             'email': response.email,
@@ -64,7 +70,6 @@ class DashboardActions:
 
         return jsonify({'data': returnData, 'message': 'The password has been changed successfully!'}), 200
 
-
     def delete_password(self):
         data = request.get_json()
         user_id = get_jwt_identity()
@@ -72,7 +77,7 @@ class DashboardActions:
         if not data or not data['password_id']:
             return jsonify({'data': [], 'message': 'Data inputed is invalid!'}), 400
 
-        response = Password.query.filter_by(user_id=user_id, id=data['password_id']).first()
+        response = Password.query.filter_by(user_id=user_id, uid=data['password_id']).first()
 
         if not response:
             return jsonify({'data': [], 'message': 'Password could not be found!'}), 404
@@ -82,49 +87,48 @@ class DashboardActions:
 
         return jsonify({'data': data['password_id'], 'message': 'Password deleted successfully!'}), 200
 
-
     def get_passwords(self):
-        pswArray = []
+        psw_array = []
 
         user_id = get_jwt_identity()
-        response = Password.query.filter_by(user_id=user_id)
+        response = User.query.filter_by(id=user_id).first()
 
-        for psw in response:
-            tempDict = {}
-            tempDict['id'] = psw.id
-            tempDict['password_name'] = psw.password_name
-            tempDict['username'] = psw.username
-            tempDict['email'] = psw.email
-            tempDict['password'] = psw.password
-            tempDict['application'] = psw.application
-            tempDict['url'] = psw.url
+        passwords = response.passwords
 
-            pswArray.append(tempDict)
+        for psw in passwords:
+            temp_dict = {
+                'id': psw.id,
+                'password_name': psw.password_name,
+                'username': psw.username,
+                'email': psw.email,
+                'password': psw.password,
+                'application': psw.application,
+                'url': psw.url
+            }
 
-        return jsonify({'data': pswArray, 'message': 'Information retrieved succesfully'}), 200
-    
+            psw_array.append(temp_dict)
+
+        return jsonify({'data': psw_array, 'message': 'tbd'}), 200
+
     def get_password(self):
         data = request.get_json()
-        current_id = get_jwt_identity()
+        user_id = get_jwt_identity()
 
-        if not data or not data['password_id']:
-            return jsonify({'data': [], 'message': 'Missing password_id'}), 400
-
-        response = Password.query.filter_by(user_id = current_id, id = data['password_id']).first()
+        response = Password.query.filter_by(uid=data['password_id'], user_id=user_id).first()
 
         if not response:
-            return jsonify({'data': data['password_id'], 'message': 'Password with that id does not exist or you do not have permission to view that password with the current token you have used!'}), 404
+            return jsonify({'data': [], 'message': 'Password could not be found!'}), 404
 
-        tempDict = {
-            'id': response.id,
-            'password_name': response.password_name,
-            'username': response.username,
-            'email': response.email,
-            'password': response.password,
-            'application': response.application,
-            'url': response.url
-        }
+        else:
+            returnData = {
+                'uid': response.uid,
+                'password_name': response.password_name,
+                'username': response.username,
+                'email': response.email,
+                'password': response.password,
+                'application': response.application,
+                'url': response.url
+            }
 
-        return jsonify({'data': tempDict, 'message': 'Information retrieved successfully!'}), 200
-
+            return jsonify({'data': returnData, 'message': 'Password found!'}), 200
 

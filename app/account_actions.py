@@ -4,8 +4,9 @@ from flask_jwt_extended.utils import get_jwt_identity
 
 # --- Security Imports
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token
-import uuid, datetime
+from flask_jwt_extended import create_access_token, decode_token
+from jwt import ExpiredSignatureError, InvalidTokenError
+import datetime
 
 # --- App Imports
 from app.database import User, db
@@ -13,7 +14,11 @@ from app import app
 
 class AccountActions:
 
-    # --- Verifies and logs in the user if the details are correct
+    # --- Create an access token that can be returned later
+    def create_token(self, user_id, additional_data, duration = 300):
+        return create_access_token(identity=str(user_id), additional_claims=additional_data, expires_delta=datetime.timedelta(seconds=duration))
+
+    # --- Verifies and logs in the user if the details are correct whilst returning a token if needed
     def login(self):
         auth = request.authorization
 
@@ -25,47 +30,54 @@ class AccountActions:
         if not user:
             return jsonify({"data": auth, "message": "Username not found"}), 404
 
-        if check_password_hash(user.password, auth.password):
-            expires = datetime.timedelta(days=7)
-            token = create_access_token(identity=str(user.id), expires_delta=expires)
+        if check_password_hash(user.master_password, auth.password):
+            token = self.create_token(user.id, {'username': user.username, 'password': user.master_password})
 
             data = {
                 "id": user.id,
                 "username": user.username,
-                "public_id": user.public_id,
-                "admin": user.admin,
                 "token": token,
-                "user_password": user.password
             }
 
             return jsonify({"data": data, "message": "User signed in successfully"}), 200
 
         return jsonify({"data": auth, "message": "Could not verify password"}), 401
 
-    # --- Adds the new user to the database and logs them in
+    # --- Adds the new user to the database and logs them in returning a token if needed
     def signup(self):
         data = request.get_json()
 
         hashedPass = generate_password_hash(data['password'])
 
-        new_user = User(public_id = str(uuid.uuid4()), username=data["username"], password = hashedPass, admin = False)
+        new_user = User(username=data["username"], master_password = hashedPass)
         db.session.add(new_user)
         db.session.commit()
 
-        expires = datetime.timedelta(days=7)
-        token = create_access_token(identity=str(new_user.id), expires_delta=expires)
+        token = self.create_token(new_user.id, {'username': new_user.username, 'password': new_user.master_password})
 
         data = {
             "id": new_user.id,
             "username": new_user.username,
-            "public_id": new_user.public_id,
-            "admin": new_user.admin,
             "token": token
         }
 
-        return jsonify({"data": data, "message": "New user created successfully!"}), 200
+        return jsonify({"data": data, "message": "New user created successfully!"}), 202
 
-    def change_password(self):
+
+    def check_token(self):
+        data = request.get_json()
+        if not data['token']:
+            return jsonify({"data": [], "message": "Missing token"}), 404
+
+        try:
+            decode_token(data['token'])
+            return jsonify({"data": [], "message": "Token is valid"}), 200
+        except ExpiredSignatureError:
+            return jsonify({"data": [], "message": "Token is out of date"}), 401
+        except InvalidTokenError:
+            return jsonify({"data": [], "message": "Token is invalid"}), 401
+
+    def update_password(self):
         data = request.get_json()
         current_id = get_jwt_identity()
 
@@ -73,11 +85,8 @@ class AccountActions:
 
         hashedPass = generate_password_hash(data['password'])
 
-        user.password = hashedPass
+        user.master_password = hashedPass
 
         db.session.commit()
 
-        return jsonify({'data': [], 'message': 'Account password updated successfully!'})
-
-
-
+        return jsonify({'data': {'new_token': self.create_token(user.id, {'username': user.username, 'password': user.master_password})}, 'message': 'Account password updated successfully!'}), 200

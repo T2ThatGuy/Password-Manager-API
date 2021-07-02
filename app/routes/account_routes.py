@@ -1,27 +1,24 @@
-from flask import jsonify
 from app import app
 
 from app.account_actions import AccountActions
 
 from flask_jwt_extended import jwt_required
 
-#--- Main Page
+account = AccountActions()
 
-@app.route('/user')
-def user():
-    return jsonify({"data": [], "message": "Got to user log in page!"}), 200
+@app.route('/user/token-verify')
+def check_token():
+    return account.check_token()
 
-# --- Sub Links
-
-@app.route('/user/login')
+@app.route('/user/login', methods = ['GET'])
 def login():
-    return AccountActions().login()
+    return account.login()
 
-@app.route('/user/signup')
+@app.route('/user/signup', methods = ['POST'])
 def signup():
-    return AccountActions().signup()
+    return account.signup()
 
 @app.route('/user/update-password', methods=['PUT'])
 @jwt_required()
 def update_password():
-    return AccountActions().change_password()
+    return account.update_password()
