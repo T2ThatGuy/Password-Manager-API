@@ -32,7 +32,7 @@ class DashboardActions:
         db.session.commit()
 
         responseData = {
-            "uid": uid,
+            "uid": data['uid'] if 'uid' in data else uid,
             "password_name": data['password_name'], 
             "username": data['username'],
             "email": data['email'],
@@ -97,7 +97,7 @@ class DashboardActions:
 
         for psw in passwords:
             temp_dict = {
-                'id': psw.id,
+                'uid': psw.uid,
                 'password_name': psw.password_name,
                 'username': psw.username,
                 'email': psw.email,
