@@ -74,7 +74,7 @@ class DashboardActions:
         data = request.get_json()
         user_id = get_jwt_identity()
 
-        if not data or not data['password_id']:
+        if not data or not 'password_id' in data:
             return jsonify({'data': [], 'message': 'Data inputed is invalid!'}), 400
 
         response = Password.query.filter_by(user_id=user_id, uid=data['password_id']).first()
