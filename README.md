@@ -1,5 +1,8 @@
 # Password Manager API
 
+## Now Deprecated
+This API is now deprecated as I work on the NEXT JS version of this application
+
 ## Creating / Linking a Database
 
 After downloading the repository the database will not exist yet. You will have to create the database using the models provided in the database.py file.
